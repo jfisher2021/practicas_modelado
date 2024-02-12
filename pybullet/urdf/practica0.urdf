@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+<robot name="trifasiko">
+
+	<link name="base_link">
+		<inertial>
+			<origin xyz="0.0 0.0 0.5" rpy="0.0 0.0 0.0" />
+			<mass value="10000.0" />
+			<inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
+		</inertial>
+
+		<visual>
+			<origin xyz="0.0 0.0 .5 " />
+			<geometry>
+				<box size="1.0 1.0 1.0" />
+			</geometry>
+		</visual>
+		<collision>
+			<origin xyz="0.0 0.0 0.5" rpy="0.0 0.0 0.0" />
+			<geometry>
+				<box size="1.0 1.0 1.0" />
+			</geometry>
+		</collision>
+
+	</link>
+
+	<material name="blue">
+		<color rgba="0.0 0.50 1.0 1.0" />
+		<texture filename="" />
+	</material>
+
+	<link name="long_arm">
+		<inertial>
+			<origin xyz="0.0 0.0 1" />
+			<mass value="2.0" />
+			<inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
+		</inertial>
+		<visual name="">
+			<origin xyz="0.0 0.0 2.0" rpy="0.0 0.0 0.0" />
+			<geometry>
+				<box size="0.3 0.5 2.0" />
+			</geometry>
+			<material name="blue" />
+		</visual>
+		<collision>
+			<origin xyz="0.0 0.0 2.0" rpy="0.0 0.0 0.0" />
+			<geometry>
+				<box size="0.3 0.5 2.0" />
+			</geometry>
+		</collision>
+	</link>
+	<joint name="base_to_long" type="revolute">
+		<parent link="base_link" />
+		<child link="long_arm" />
+		<origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+		<dynamics damping="0.0" friction="0.00001" />
+		<axis xyz="1.0 0.0 0.0" />
+
+        <limit lower="-0.14" upper="0.14" effort="10.0" velocity="0.5" />
+	</joint>
+
+	<link name="short_arm">
+		<inertial>
+			<origin xyz="0.0 0.0 4" />
+			<mass value="200.0" />
+			<inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
+		</inertial>
+		<visual name="">
+			<origin xyz="-0.5 0.0 3.2" rpy="0.0 0.0 0.0" />
+			<geometry>
+				<box size="0.7 0.5 0.4" />
+			</geometry>
+			<material name="blue" />
+		</visual>	
+		<collision>
+			<origin xyz="-0.5 0.0 3.2" rpy="0.0 0.0 0.0" />
+			<geometry>
+				<box size="0.7 0.5 0.4" />
+			</geometry>
+		</collision>
+	</link>
+	<joint name="long_to_short" type="revolute">
+		<parent link="long_arm" />
+		<child link="short_arm" />
+		<origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+		<dynamics damping="0.0" friction="0.00001" />
+		<axis xyz="0.0 0.0 1.0" />
+
+		<limit lower="-1.0" upper="1.0" effort="1000.0" velocity="0.5" />
+	</joint>
+</robot>
