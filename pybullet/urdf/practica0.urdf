@@ -48,7 +48,7 @@
 			</geometry>
 		</collision>
 	</link>
-	<joint name="base_to_long" type="revolute">
+	<joint name="base_to_long" type="fixed">
 		<parent link="base_link" />
 		<child link="long_arm" />
 		<origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
