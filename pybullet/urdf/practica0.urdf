@@ -85,6 +85,6 @@
 		<dynamics damping="0.0" friction="0.00001" />
 		<axis xyz="0.0 0.0 1.0" />
 
-		<limit lower="-1.0" upper="1.0" effort="1000.0" velocity="0.5" />
+		<limit lower="4.0" upper="-4.0" effort="1000.0" velocity="0.5" />
 	</joint>
 </robot>

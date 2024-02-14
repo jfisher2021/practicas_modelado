@@ -15,28 +15,24 @@ startOrientation = p.getQuaternionFromEuler([0,0,-3.15])
 
 robotId = p.loadURDF(urdf_path,startPos, startOrientation)
 
-frictionId = p.addUserDebugParameter("DOOR_jointFriction", 0, 100, 10)
-torqueId = p.addUserDebugParameter("DOOR_joint torque", -20, 20, -9)
 numJoints = p.getNumJoints(robotId)
 print("NumJoints: {}".format(numJoints))
 for j in range(numJoints):
      print("{} - {}".format(p.getJointInfo(robotId,j)[0], p.getJointInfo(robotId,j)[1].decode("utf-8")))
 
-speedId = p.addUserDebugParameter("R2D2_speed", 0, 40, 5)
-torqueId = p.addUserDebugParameter("R2D2_force", 0, 40, 5)
+frictionId = p.addUserDebugParameter("jointFriction", 0, 20, 10)
+torqueId = p.addUserDebugParameter("torque force", 0, 40, 0)
 try:
     while True:
+        
+        jointTorque = p.readUserDebugParameter(torqueId)
+        frictionForce = p.readUserDebugParameter(frictionId)
+          
+        p.setJointMotorControl2(robotId, 1, p.VELOCITY_CONTROL, targetVelocity=0, force=frictionForce)
+        p.setJointMotorControl2(robotId, 1, p.TORQUE_CONTROL, force=jointTorque)
         p.stepSimulation()
         time.sleep(1./240.)
-        speed = p.readUserDebugParameter(speedId)
-        torque = p.readUserDebugParameter(torqueId)
 
-                
-        frictionForce = p.readUserDebugParameter(frictionId)
-        jointTorque = p.readUserDebugParameter(torqueId)
-        #set the joint friction
-        p.setJointMotorControl2(robotId, 1, p.VELOCITY_CONTROL, targetVelocity=0, force=frictionForce)
-        #apply a joint torque
 except KeyboardInterrupt:
       pass
 	
