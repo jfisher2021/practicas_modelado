@@ -21,18 +21,23 @@ for j in range(numJoints):
      print("{} - {}".format(p.getJointInfo(robotId,j)[0], p.getJointInfo(robotId,j)[1].decode("utf-8")))
 
 frictionId = p.addUserDebugParameter("jointFriction", 0, 20, 10)
-torqueId = p.addUserDebugParameter("torque force", 0, 40, 0)
+torqueId = p.addUserDebugParameter("torque force", 0, 20, 0)
 velocityId = p.addUserDebugParameter("jointVelocity", -20, 20, 0)
+
+torqueId0 = p.addUserDebugParameter("long_arm", -40, 40, 0)
 try:
     while True:
         
         jointTorque = p.readUserDebugParameter(torqueId)
         frictionForce = p.readUserDebugParameter(frictionId)
         velocity = p.readUserDebugParameter(velocityId)
+        jointTorque0 = p.readUserDebugParameter(torqueId0)
           
         p.setJointMotorControl2(robotId, 1, p.VELOCITY_CONTROL, targetVelocity=0, force=frictionForce)
         p.setJointMotorControl2(robotId, 1, p.TORQUE_CONTROL, force=jointTorque)
         p.setJointMotorControl2(robotId, 1, p.VELOCITY_CONTROL, targetVelocity=velocity, force=frictionForce)
+        p.setJointMotorControl2(robotId, 0, p.TORQUE_CONTROL, force=jointTorque0)
+        p.setJointMotorControl2(robotId, 0, p.VELOCITY_CONTROL, targetVelocity=20, force=jointTorque0)
         p.stepSimulation()
         time.sleep(1./240.)
 
