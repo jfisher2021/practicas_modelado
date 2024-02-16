@@ -9,7 +9,7 @@
 		</inertial>
 
 		<visual>
-			<origin xyz="0.0 0.0 .5 " />
+			<origin xyz="0.0 0.0 0.5 " />
 			<geometry>
 				<box size="1.0 1.0 1.0" />
 			</geometry>
@@ -48,7 +48,7 @@
 			</geometry>
 		</collision>
 	</link>
-	<joint name="base_to_long" type="fixed">
+	<joint name="base_to_long" type="revolute">
 		<parent link="base_link" />
 		<child link="long_arm" />
 		<origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
