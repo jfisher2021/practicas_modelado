@@ -6,22 +6,22 @@
 
     <link name="cilindro">
         <inertial>
-            <origin xyz="1 1 0.5" />
-            <mass value="20000.0" />
+            <origin xyz="0 0 0.5" />
+            <mass value="200000.0" />
             <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
         </inertial>
         <visual name="">
-            <origin xyz="1 1 0.5" rpy="0.0 0.0 0.0" />
+            <origin xyz="0 0 0.5" rpy="0.0 0.0 0.0" />
             <geometry>
-                <cylinder radius="0.3" length="1.0" />
+                <cylinder radius="0.2" length="1.0" />
             </geometry>
             <material name="red" />
         </visual>
 
         <collision>
-            <origin xyz="1 1 0.5" rpy="0.0 0.0 0.0" />
+            <origin xyz="0 0 0.5" rpy="0.0 0.0 0.0" />
             <geometry>
-                <cylinder radius="0.3" length="1.0" />
+                <cylinder radius="0.2" length="1.0" />
             </geometry>
         </collision>
     </link>
@@ -29,22 +29,22 @@
     <link
         name="barra">
         <inertial>
-            <origin xyz="1 1.8 1" rpy="0 0.0 0.0" />
-            <mass value="2.0" />
+            <origin xyz="0 0.9 0.2" rpy="0 0.0 0.0" />
+            <mass value="5.0" />
             <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
         </inertial>
         <visual name="">
-            <origin xyz="1 1.8 1" rpy="0 0.0 0.0" />
+            <origin xyz="0 0.9 0.2" rpy="0 0.0 0.0" />
             <geometry>
-                <box size="0.1 1.1.0 0.1" />
+                <box size="0.1 2.0 0.1" />
             </geometry>
             <material name="red" />
         </visual>
 
         <collision>
-            <origin xyz="1 1.8 1" rpy="0 0.0 0.0" />
+            <origin xyz="0 0.9 0.2" rpy="0 0.0 0.0" />
             <geometry>
-                <box size="0.1 1.1.0 0.1" />
+                <box size="0.1 2.0 0.1" />
             </geometry>
         </collision>
     </link>
@@ -52,7 +52,7 @@
         name="not_to_pass" type="continuous">
         <parent link="cilindro" />
         <child link="barra" />
-        <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+        <origin xyz="0.0 0.0 0.0" rpy="0 0.0 -3.15/2" />
         <dynamics damping="0.0" friction="0.00001" />
         <axis xyz="0.0 0.0 1.0" />
 
