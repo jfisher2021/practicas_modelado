@@ -46,6 +46,6 @@ def plot_results(csv_files):
     plt.show()
     
 # Rutas a los archivos CSV
-csv_files = ['robot_data31.csv', 'robot_data32.csv', 'probar.csv']
+csv_files = ['robot_data31.csv', 'robot_data32.csv', 'robot_data33.csv']
 # Llamar a la función para plotear los resultados
 plot_results(csv_files)

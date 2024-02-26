@@ -35,7 +35,7 @@ huskyOrientation = p.getQuaternionFromEuler([0,0,3.15/2])
 
 terreneitor = p.loadURDF(coche, startPos, huskyOrientation)
 rampas = p.loadURDF(rampa, startPos, startOrientation)
-barraita = p.loadURDF(barra,posBarra, startOrientation)
+barrita = p.loadURDF(barra,posBarra, startOrientation)
 final = p.loadURDF(meta, finalPos, startOrientation)
 
 #sacar la posicion del husky
@@ -56,18 +56,17 @@ try:
      distance_threshold = 0.01  # Distance threshold for recording information
      data = []  # Lista para almacenar los datos
      current_pos = 0
+     # p.changeDynamics(barrita, 0, localInertiaDiagonal=[4, 0, 4])
+     lateralFriction = 0.93
+     spinningFriction =0.005
+     rollingFriction = 0.003
+     for i in range(2, 6):
+          p.changeDynamics(terreneitor, i, lateralFriction=lateralFriction ,spinningFriction=spinningFriction, rollingFriction=rollingFriction)
+     p.setJointMotorControlArray(terreneitor, [2, 3, 4, 5], p.VELOCITY_CONTROL, targetVelocities=[velocity] * 4, forces=[force] * 4)
      while True:
           posRobot, _ = p.getBasePositionAndOrientation(terreneitor)
           velRobot, _ = p.getBaseVelocity(terreneitor)
           pos_y = posRobot[1]
-          lateralFriction = 0.93
-          spinningFriction =0.005
-          rollingFriction = 0.003
-          p.changeDynamics(terreneitor, -1, lateralFriction=lateralFriction)
-          p.changeDynamics(terreneitor, -1, spinningFriction=spinningFriction)
-          p.changeDynamics(terreneitor, -1, rollingFriction=rollingFriction)
-          p.changeDynamics(barraita, 0, localInertiaDiagonal=[10.1, 0, 10.1])
-          p.setJointMotorControlArray(terreneitor, [2, 3, 4, 5], p.VELOCITY_CONTROL, targetVelocities=[velocity] * 4, forces=[force] * 4)
           # Calcular la distancia recorrida desde el último registro
           distance = pos_y - current_pos
           
