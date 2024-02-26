@@ -6,7 +6,7 @@ import pybullet_data
 
 
 def write_to_csv(data):
-    with open('robot_data.csv', mode='w', newline='') as file:
+    with open('robot_data33.csv', mode='w', newline='') as file:
         writer = csv.writer(file)
         writer.writerow(['Tiempo', 'Posición_Y', 'Velocidad_Y', 'Velocidad_Ruedas', 'Fuerza_Ruedas'])
         writer.writerows(data)
@@ -60,8 +60,14 @@ try:
           posRobot, _ = p.getBasePositionAndOrientation(terreneitor)
           velRobot, _ = p.getBaseVelocity(terreneitor)
           pos_y = posRobot[1]
-          
-          p.setJointMotorControlArray(terreneitor, [2, 3, 4, 5], p.VELOCITY_CONTROL, targetVelocities=[velocity, velocity, velocity, velocity], forces=[force, force, force, force])
+          lateralFriction = 0.93
+          spinningFriction =0.005
+          rollingFriction = 0.003
+          p.changeDynamics(terreneitor, -1, lateralFriction=lateralFriction)
+          p.changeDynamics(terreneitor, -1, spinningFriction=spinningFriction)
+          p.changeDynamics(terreneitor, -1, rollingFriction=rollingFriction)
+          p.changeDynamics(barraita, 0, localInertiaDiagonal=[10.1, 0, 10.1])
+          p.setJointMotorControlArray(terreneitor, [2, 3, 4, 5], p.VELOCITY_CONTROL, targetVelocities=[velocity] * 4, forces=[force] * 4)
           # Calcular la distancia recorrida desde el último registro
           distance = pos_y - current_pos
           
