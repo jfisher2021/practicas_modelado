@@ -6,7 +6,7 @@ import pybullet_data
 
 
 def write_to_csv(data):
-    with open('robot_data33.csv', mode='w', newline='') as file:
+    with open('robot_data3454543.csv', mode='w', newline='') as file:
         writer = csv.writer(file)
         writer.writerow(['Tiempo', 'Posición_Y', 'Velocidad_Y', 'Velocidad_Ruedas', 'Fuerza_Ruedas'])
         writer.writerows(data)
@@ -25,7 +25,7 @@ planeId = p.loadURDF("plane.urdf")
 
 startPos = [0,0,0]
 finalPos = [0.0, 20.0, 0.05]
-posBarra = [-1.5,17,0.5]
+posBarra = [-1.5,17,0.55]
 
 velocity = 11
 force=25
@@ -56,7 +56,7 @@ try:
      distance_threshold = 0.01  # Distance threshold for recording information
      data = []  # Lista para almacenar los datos
      current_pos = 0
-     # p.changeDynamics(barrita, 0, localInertiaDiagonal=[4, 0, 4])
+     p.changeDynamics(barrita, 0, localInertiaDiagonal=[6.6, 0, 6.6])
      lateralFriction = 0.93
      spinningFriction =0.005
      rollingFriction = 0.003

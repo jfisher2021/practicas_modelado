@@ -13,7 +13,7 @@
         <visual name="">
             <origin xyz="0 0 0" rpy="0.0 0.0 0.0" />
             <geometry>
-                <cylinder radius="0.2" length="1.0" />
+                <cylinder radius="0.2" length="1.1" />
             </geometry>
             <material name="red" />
         </visual>
@@ -29,12 +29,12 @@
     <link
         name="barra">
         <inertial>
-            <origin xyz="0 -0.5 -0.2" rpy="0 0  0" />
+            <origin xyz="0 -1 -0.2" rpy="0 0  0" />
             <mass value="5.0" />
             <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
         </inertial>
         <visual name="">
-            <origin xyz="0 -0.5 -0.2" rpy="0 0 0" />
+            <origin xyz="0 -1 -0.2" rpy="0 0 0" />
             <geometry>
                 <box size="0.1 2.0 0.1" />
             </geometry>
@@ -42,7 +42,7 @@
         </visual>
 
         <collision>
-            <origin xyz="0 -0.5 -0.2" rpy="0 0 0" />
+            <origin xyz="0 -1 -0.2" rpy="0 0 0" />
             <geometry>
                 <box size="0.1 2.0 0.1" />
             </geometry>
