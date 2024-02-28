@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import math
 import csv
 
 def plot_results(csv_files):
@@ -37,7 +38,12 @@ def plot_results(csv_files):
 
         # Plotear los resultados with a different color for each file
         plt.plot(posicion_robot, velocidad_robot, label=f'Archivo: {csv_file}', color=colors[i])
-
+        MSE = np.square(np.subtract(velocidad_robot,2)).mean() 
+        RMSE = math.sqrt(MSE)   
+        print("Root Mean Square Error: \n", colors[i])
+        
+        print(RMSE)
+    
     plt.xlabel('Posición del robot (Y)')
     plt.ylabel('Velocidad del robot')
     plt.title('Variación de la velocidad del robot en función de su posición')
@@ -46,6 +52,6 @@ def plot_results(csv_files):
     plt.show()
     
 # Rutas a los archivos CSV
-csv_files = ['robot_data31.csv', 'robot_data32.csv', 'robot_data33.csv']
+csv_files = ['robot_data31.csv', 'robot_data32.csv', 'probar.csv']
 # Llamar a la función para plotear los resultados
 plot_results(csv_files)

@@ -3,14 +3,15 @@ import time
 import csv
 import pybullet_data
 
+#0.5359841334206371 --probar.csv
+#0.5326216873831918 --buenpid1.csv
 
 
 def write_to_csv(data):
     with open('probar.csv', mode='w', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(['Tiempo', 'Posición_Y', 'Velocidad_Y', 'Velocidad_Ruedas', 'Fuerza_Ruedas'])
+        writer.writerow(['Tiempo', 'Posición_Y', 'Velocidad_Y', 'Velocidad_Rueda_1', 'velocidad_Rueda_2', 'velocidad_Rueda_3', 'velocidad_Rueda_4', 'Fuerza_Rueda_1', 'Fuerza_Rueda_2', 'Fuerza_Rueda_3', 'Fuerza_Rueda_4'])
         writer.writerows(data)
-
 rampa = "urdf/escenario1.urdf"
 barra = "urdf/barrita.urdf"
 meta = "urdf/final.urdf"
@@ -24,25 +25,27 @@ planeId = p.loadURDF("plane.urdf")
 
 startPos = [0,0,0]
 finalPos = [0.0, 20.0, 0.05]
-posBarra = [-1.5,17,0.5]
+posBarra = [-1.5,17,0.55]
 
 ####PID####
-Kp = 33
-Ki = 15
-Kd = 10
+Kp = 75
+Ki = 33
+Kd = 24
 
 velocity = 11
 force=25
 error_anterior=0
+
 
 startOrientation = p.getQuaternionFromEuler([0,0,3.15/2])
 huskyOrientation = p.getQuaternionFromEuler([0,0,3.15/2])
 
 terreneitor = p.loadURDF(coche, startPos, huskyOrientation)
 rampas = p.loadURDF(rampa, startPos, startOrientation)
-barraita = p.loadURDF(barra,posBarra, startOrientation)
+barrita = p.loadURDF(barra,posBarra, startOrientation)
 final = p.loadURDF(meta, finalPos, startOrientation)
 
+currenent_time = time.time()
 #sacar la posicion del husky
 
 numJoints = p.getNumJoints(rampas)
@@ -60,32 +63,41 @@ p.setRealTimeSimulation(1)
 try:
      distance_threshold = 0.01  # Distance threshold for recording information
      data = []  # Lista para almacenar los datos
-     current_pos = 0
+     current_pos = -1
+     p.changeDynamics(barrita, 0, localInertiaDiagonal=[6.6, 0, 6.6])
+     lateralFriction = 0.93
+     spinningFriction =0.005
+     rollingFriction = 0.003
+     for i in range(2, 6):
+          p.changeDynamics(terreneitor, i, lateralFriction=lateralFriction ,spinningFriction=spinningFriction, rollingFriction=rollingFriction)
      while True:
-          posRobot, _ = p.getBasePositionAndOrientation(terreneitor)
+          posRobot, OriRobot = p.getBasePositionAndOrientation(terreneitor)
           velRobot, _ = p.getBaseVelocity(terreneitor)
           pos_y = posRobot[1]
-          lateralFriction = 0.93
-          spinningFriction =0.005
-          rollingFriction = 0.003
-          p.changeDynamics(terreneitor, -1, lateralFriction=lateralFriction)
-          p.changeDynamics(terreneitor, -1, spinningFriction=spinningFriction)
-          p.changeDynamics(terreneitor, -1, rollingFriction=rollingFriction)
-          p.changeDynamics(barraita, 0, localInertiaDiagonal=[10.1, 0, 10.1])
-          p.setJointMotorControlArray(terreneitor, [2, 3, 4, 5], p.VELOCITY_CONTROL, targetVelocities=[velocity] * 4, forces=[force] * 4)
+          Euler = p.getEulerFromQuaternion(OriRobot)
+          angleengrados = Euler[1]*180/3.1416
           # Calcular la distancia recorrida desde el último registro
           distance = pos_y - current_pos
           
+          error_vel= 2.1 - velRobot[1]
+          derivativo = abs(error_vel - error_anterior)
+          integral = +error_vel
+          velocity = Kp * error_vel + Ki * integral + Kd * derivativo
+          if velocity > 33:
+               velocity = 33
+          error_anterior = error_vel
           if distance >= 0.01:  # Si se ha movido al menos 0.01 metros
-               error_vel= 2.2 - velRobot[1]
-               derivativo = abs(error_vel - error_anterior)
-               integral = +error_vel
+               if (angleengrados > -39 and angleengrados < -2):
+                    p.setJointMotorControlArray(terreneitor, [4, 5], p.VELOCITY_CONTROL, targetVelocities=[velocity*8.6] * 2, forces=[force] * 2)
+               elif (angleengrados > 2):     
+                    p.setJointMotorControlArray(terreneitor, [2, 3, 4, 5], p.VELOCITY_CONTROL, targetVelocities=[velocity/4] * 4, forces=[force] * 4)
+                    print("bajada")
+               else:
+                    p.setJointMotorControlArray(terreneitor, [2, 3, 4, 5], p.VELOCITY_CONTROL, targetVelocities=[velocity] * 4, forces=[force] * 4)
+                    print("plano")
                
-               velocity = Kp*error_vel + Ki * derivativo	+ Kd * integral
-               error_anterior = error_vel
-               print("error_anterior", error_anterior)
-               print("derivativo", derivativo)
-               print("error_vel", error_vel)
+               # print("angle", angleengrados)
+               # print("error_vel", error_vel)
                print(velocity)
                current_pos = pos_y
                # Obtener velocidad de las ruedas
@@ -93,7 +105,7 @@ try:
                # Obtener fuerza de las ruedas
                wheel_forces = [p.getJointState(terreneitor, i)[3] for i in [2, 3, 4, 5]]
                # Agregar los datos a la lista
-               data.append([time.time(), pos_y, velRobot[1], wheel_velocities[1], wheel_forces[1]])
+               data.append([round(time.time() - currenent_time, 4), round(pos_y, 4), round(velRobot[1], 4), round(wheel_velocities[0], 4), round(wheel_velocities[1], 4), round(wheel_velocities[2], 4), round(wheel_velocities[3], 4), round(wheel_forces[0], 4), round(wheel_forces[1], 4), round(wheel_forces[2], 4), round(wheel_forces[3], 4)])
           
           if pos_y > 20:  # Si el robot alcanza el final del escenario
                write_to_csv(data)  # Escribir datos en el archivo CSV
