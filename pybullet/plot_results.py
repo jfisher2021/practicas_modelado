@@ -1,86 +1,55 @@
 import numpy as np
-import matplotlib.pyplot as plt
 import math
 import csv
 
+import matplotlib.pyplot as plt
+
 def plot_results(csv_files):
-    # Crear el gráfico
     plt.figure(figsize=(10, 6))
     
-    # Define a list of colors
     colors = ['purple', 'blue', 'green']
-    
+    # List to store the RMSE of each file
+    rmses = []
+
     for i, csv_file in enumerate(csv_files):
-        # Leer los datos del archivo CSV
         with open(csv_file, 'r') as file:
             reader = csv.reader(file)
-            # Saltar la primera fila si contiene encabezados
-            next(reader)
-            # Leer datos y almacenar en listas
-            tiempo = []
-            posicion_robot = []
-            velocidad_robot = []
-            velocidad_ruedas = []
-            fuerza_ruedas = []
+            next(reader)  # Skip header
+            time, robot_position, robot_velocity, wheel_velocity, wheel_force = [], [], [], [], []
             for row in reader:
-                tiempo.append(float(row[0]))
-                posicion_robot.append(float(row[1]))
-                velocidad_robot.append(float(row[2]))
-                velocidad_ruedas.append(float(row[3]))
-                fuerza_ruedas.append(float(row[4]))
+                time.append(float(row[0]))
+                robot_position.append(float(row[1]))
+                robot_velocity.append(float(row[2]))
+                wheel_velocity.append(float(row[3]))
+                wheel_force.append(float(row[4]))
 
-        # Convertir listas a arrays de numpy para facilitar el manejo
-        tiempo = np.array(tiempo)
-        posicion_robot = np.array(posicion_robot)
-        velocidad_robot = np.array(velocidad_robot)
-        velocidad_ruedas = np.array(velocidad_ruedas)
-        fuerza_ruedas = np.array(fuerza_ruedas)
+        # Convert lists to numpy arrays
+        time = np.array(time)
+        robot_position = np.array(robot_position)
+        robot_velocity = np.array(robot_velocity)
+        wheel_velocity = np.array(wheel_velocity)
+        wheel_force = np.array(wheel_force)
 
-        # Plotear los resultados con un color diferente para cada archivo
-        for i, csv_file in enumerate(csv_files):
-            # Leer los datos del archivo CSV
-            with open(csv_file, 'r') as file:
-                reader = csv.reader(file)
-                # Saltar la primera fila si contiene encabezados
-                next(reader)
-                # Leer datos y almacenar en listas
-                tiempo = []
-                posicion_robot = []
-                velocidad_robot = []
-                velocidad_ruedas = []
-                fuerza_ruedas = []
-                for row in reader:
-                    tiempo.append(float(row[0]))
-                    posicion_robot.append(float(row[1]))
-                    velocidad_robot.append(float(row[2]))
-                    velocidad_ruedas.append(float(row[3]))
-                    fuerza_ruedas.append(float(row[4]))
+        # Plot the results
+        plt.plot(robot_position, robot_velocity, label=f'File: {csv_file}', color=colors[i])
 
-            # Convertir listas a arrays de numpy para facilitar el manejo
-            tiempo = np.array(tiempo)
-            posicion_robot = np.array(posicion_robot)
-            velocidad_robot = np.array(velocidad_robot)
-            velocidad_ruedas = np.array(velocidad_ruedas)
-            fuerza_ruedas = np.array(fuerza_ruedas)
+        # Calculate the RMSE and add it to the list
+        MSE = np.square(np.subtract(robot_velocity, 2)).mean()
+        RMSE = math.sqrt(MSE)
+        rmses.append(RMSE)
 
-            # Plotear los resultados con un color diferente para cada archivo
-            plt.plot(posicion_robot, velocidad_robot, label=f'Archivo: {csv_file}', color=colors[i])
+    # Update the legend labels to include the RMSE
+    # First, create the legend with the original labels
+    labels = [f'{csv_files[i]} (RMSE: {rmses[i]:.5f})' for i in range(len(csv_files))]
+    plt.legend(labels, loc='best')
 
-            # Calcular el RMSE
-            MSE = np.square(np.subtract(velocidad_robot, 2)).mean()
-            RMSE = math.sqrt(MSE)
-            print("Root Mean Square Error:", RMSE)
+    plt.xlabel('Robot Position (Y)')
+    plt.ylabel('Robot Velocity')
+    plt.title('Variation of Robot Velocity with Position')
+    plt.grid(True)
+    plt.show()
 
-            # Mostrar el RMSE en el gráfico
-
-        plt.xlabel('Posición del robot (Y)')
-        plt.ylabel('Velocidad del robot')
-        plt.title('Variación de la velocidad del robot en función de su posición')
-        plt.legend()
-        plt.grid(True)
-        plt.show()
-
-# Rutas a los archivos CSV
-csv_files = ['robot_data31.csv', 'robot_data33.csv', 'probar.csv']
-# Llamar a la función para plotear los resultados
+# Paths to the CSV files
+csv_files = ['csvs/Fase4.csv']
+# Call the function to plot the results
 plot_results(csv_files)
