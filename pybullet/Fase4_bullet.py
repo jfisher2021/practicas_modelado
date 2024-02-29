@@ -14,7 +14,7 @@ def write_to_csv(data):
 ramp = "urdf/ramp.urdf"
 bar = "urdf/barrita.urdf"
 goal = "urdf/final.urdf"
-car = "husky/husky.urdf"
+terreneitor = "husky/husky.urdf"
 
 # Connect to the physics server
 physicsClient = p.connect(p.GUI) #or p.DIRECT for non-graphical version
@@ -44,9 +44,9 @@ num = 0
 current_time = time.time()
 # Load URDF models
 startOrientation = p.getQuaternionFromEuler([0,0,3.15/2])
-carOrientation = p.getQuaternionFromEuler([0,0,3.15/2])
+terreneitorOrientation = p.getQuaternionFromEuler([0,0,3.15/2])
 
-carModel = p.loadURDF(car, startPos, carOrientation)
+terreneitorModel = p.loadURDF(terreneitor, startPos, terreneitorOrientation)
 rampModel = p.loadURDF(ramp, startPos, startOrientation)
 barModel = p.loadURDF(bar, barPos, startOrientation)
 goalModel = p.loadURDF(goal, finalPos, startOrientation)
@@ -57,11 +57,11 @@ print("NumJoints: {}".format(numJoints))
 for j in range(numJoints):
       print("{} - {}".format(p.getJointInfo(rampModel,j)[0], p.getJointInfo(rampModel,j)[1].decode("utf-8")))
 
-# Get the number of joints in the car model
-numJointsCar = p.getNumJoints(carModel)
-print("NumJoints Car: {}".format(numJointsCar))
-for j in range(numJointsCar):
-      print("{} - {}".format(p.getJointInfo(carModel,j)[0], p.getJointInfo(carModel,j)[1].decode("utf-8")))
+# Get the number of joints in the terreneitor model
+numJointsterreneitor = p.getNumJoints(terreneitorModel)
+print("NumJoints terreneitor: {}".format(numJointsterreneitor))
+for j in range(numJointsterreneitor):
+      print("{} - {}".format(p.getJointInfo(terreneitorModel,j)[0], p.getJointInfo(terreneitorModel,j)[1].decode("utf-8")))
 
 # Enable real-time simulation
 p.setRealTimeSimulation(1)
@@ -75,41 +75,41 @@ try:
       spinningFriction = 0.005
       rollingFriction = 0.003
       for i in range(2, 6):
-            p.changeDynamics(carModel, i, lateralFriction=lateralFriction, spinningFriction=spinningFriction, rollingFriction=rollingFriction)
+            p.changeDynamics(terreneitorModel, i, lateralFriction=lateralFriction, spinningFriction=spinningFriction, rollingFriction=rollingFriction)
       
       while True:
-            # Get the position and orientation of the car
-            carPos, carOri = p.getBasePositionAndOrientation(carModel)
-            carVel, _ = p.getBaseVelocity(carModel)
-            pos_y = carPos[1]
-            Euler = p.getEulerFromQuaternion(carOri)
+            # Get the position and orientation of the terreneitor
+            terreneitorPos, terreneitorOri = p.getBasePositionAndOrientation(terreneitorModel)
+            terreneitorVel, _ = p.getBaseVelocity(terreneitorModel)
+            pos_y = terreneitorPos[1]
+            Euler = p.getEulerFromQuaternion(terreneitorOri)
             angle_degrees = Euler[1] * 180 / 3.1416
 
             # Calculate the distance traveled since the last recording
             distance = pos_y - current_pos
 
             # Set the new camera target position
-            cam_target_pos = carPos
+            cam_target_pos = terreneitorPos
             p.resetDebugVisualizerCamera(cam_distance, cam_yaw, cam_pitch, cam_target_pos)
 
-            if distance >= 0.01:  # If the car has moved at least 0.01 meters
+            if distance >= 0.01:  # If the terreneitor has moved at least 0.01 meters
                   if (angle_degrees > -39 and angle_degrees < -10):
                          num += 1  
-                         p.setJointMotorControlArray(carModel, [4, 5], p.VELOCITY_CONTROL, targetVelocities=[i * 6.5] * 2, forces=[force] * 2)
+                         p.setJointMotorControlArray(terreneitorModel, [4, 5], p.VELOCITY_CONTROL, targetVelocities=[i * 6.5] * 2, forces=[force] * 2)
                   elif (angle_degrees > 2):
-                         p.setJointMotorControlArray(carModel, [2, 3, 4, 5], p.VELOCITY_CONTROL, targetVelocities=[velDown] * 4, forces=[force * 3] * 4)
+                         p.setJointMotorControlArray(terreneitorModel, [2, 3, 4, 5], p.VELOCITY_CONTROL, targetVelocities=[velDown] * 4, forces=[force * 3] * 4)
                   else:
-                         p.setJointMotorControlArray(carModel, [2, 3, 4, 5], p.VELOCITY_CONTROL, targetVelocities=[best_velocity] * 4, forces=[force] * 4)
+                         p.setJointMotorControlArray(terreneitorModel, [2, 3, 4, 5], p.VELOCITY_CONTROL, targetVelocities=[best_velocity] * 4, forces=[force] * 4)
 
                   current_pos = pos_y
                   # Get wheel velocities
-                  wheel_velocities = [p.getJointState(carModel, i)[1] for i in [2, 3, 4, 5]]
+                  wheel_velocities = [p.getJointState(terreneitorModel, i)[1] for i in [2, 3, 4, 5]]
                   # Get wheel forces
-                  wheel_forces = [p.getJointState(carModel, i)[3] for i in [2, 3, 4, 5]]
+                  wheel_forces = [p.getJointState(terreneitorModel, i)[3] for i in [2, 3, 4, 5]]
                   # Add the data to the list
-                  data.append([round(time.time() - current_time, 4), round(pos_y, 4), round(carVel[1], 4), round(wheel_velocities[0], 4), round(wheel_velocities[1], 4), round(wheel_velocities[2], 4), round(wheel_velocities[3], 4), round(wheel_forces[0], 4), round(wheel_forces[1], 4), round(wheel_forces[2], 4), round(wheel_forces[3], 4)])
+                  data.append([round(time.time() - current_time, 4), round(pos_y, 4), round(terreneitorVel[1], 4), round(wheel_velocities[0], 4), round(wheel_velocities[1], 4), round(wheel_velocities[2], 4), round(wheel_velocities[3], 4), round(wheel_forces[0], 4), round(wheel_forces[1], 4), round(wheel_forces[2], 4), round(wheel_forces[3], 4)])
 
-            if pos_y > 20:  # If the car reaches the end of the scenario
+            if pos_y > 20:  # If the terreneitor reaches the end of the scenario
                   write_to_csv(data)  # Write data to the CSV file
                   break
 except KeyboardInterrupt:
