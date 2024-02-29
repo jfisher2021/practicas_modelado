@@ -11,7 +11,7 @@ def write_to_csv(data):
           writer.writerows(data)
 
 # File paths for URDF models
-ramp = "urdf/escenario1.urdf"
+ramp = "urdf/ramp.urdf"
 bar = "urdf/barrita.urdf"
 goal = "urdf/final.urdf"
 car = "husky/husky.urdf"

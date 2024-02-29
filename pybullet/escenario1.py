@@ -12,7 +12,7 @@ def write_to_csv(data):
         writer.writerows(data)
 
 
-rampa = "urdf/escenario1.urdf"
+rampa = "urdf/ramp.urdf"
 barra = "urdf/barrita.urdf"
 meta = "urdf/final.urdf"
 coche = "husky/husky.urdf"
