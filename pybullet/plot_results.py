@@ -50,6 +50,6 @@ def plot_results(csv_files):
     plt.show()
 
 # Paths to the CSV files
-csv_files = ['csvs/Fase4.csv']
+csv_files = ['csvs/Fase4.csv', 'csvs/Fase3.csv']
 # Call the function to plot the results
 plot_results(csv_files)
