@@ -70,13 +70,16 @@ try:
       distance_threshold = 0.01  # Distance threshold for recording information
       data = []  # List to store the data
       current_pos = -1
-      p.changeDynamics(barModel, 0, localInertiaDiagonal=[6.6, 0, 6.6])
+
+      # part of 3.2
       lateralFriction = 0.93
       spinningFriction = 0.005
       rollingFriction = 0.003
       for i in range(2, 6):
             p.changeDynamics(terreneitorModel, i, lateralFriction=lateralFriction, spinningFriction=spinningFriction, rollingFriction=rollingFriction)
       
+      # part of 3.3
+      p.changeDynamics(barModel, 0, localInertiaDiagonal=[6.6, 0, 6.6])
       while True:
             # Get the position and orientation of the terreneitor
             terreneitorPos, terreneitorOri = p.getBasePositionAndOrientation(terreneitorModel)
