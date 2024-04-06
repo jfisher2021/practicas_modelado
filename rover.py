@@ -3,7 +3,8 @@ import time
 import pybullet_data
 
 
-car = "urdf/robot_nuevo.urdf"
+car = "urdf/probando.urdf"
+caja = "urdf/caja.urdf"
 
 # Connect to the physics server
 physicsClient = p.connect(p.GUI) #or p.DIRECT for non-graphical version
@@ -14,15 +15,9 @@ p.setGravity(0,0,-9.8)
 planeId = p.loadURDF("plane.urdf")
 
 # Define initial positions and orientations
-startPos = [0,0,2]
-finalPos = [0.0, 20.0, 0.05]
-barPos = [-1.5,17,0.55]
-
-# Configure camera settings
-cam_target_pos = [0, 0, 0]  # Position for camera to look at (initial position of the robot)
-cam_distance = 5 # Distance from camera to target (adjust as needed)
-cam_yaw = 45  # Horizontal rotation angle of the camera
-cam_pitch = -45  # Vertical rotation angle of the camera
+startPos = [0,0,3]
+cajaPos = [0,3,0]
+pos_dejar = [0,-0.5,1.5]
 
 # Constants for controlling the robot
 velocity = 11
@@ -30,10 +25,10 @@ force = 25
 
 current_time = time.time()
 # Load URDF models
-startOrientation = p.getQuaternionFromEuler([0,0,3.15/2])
-carOrientation = p.getQuaternionFromEuler([0,0,3.15/2])
+carOrientation = p.getQuaternionFromEuler([0,0,3.15])
 
 carModel = p.loadURDF(car, startPos, carOrientation)
+cajaModel = p.loadURDF(caja, cajaPos, carOrientation)
 
 
 # Get the number of joints in the ramp model
@@ -44,6 +39,11 @@ for j in range(numJoints):
 
 # Enable real-time simulation
 p.setRealTimeSimulation(1)
+
+
+
+# Solo queremos que la cinemática inversa actue sobre los primeros 3 JOINTS
+robotEndEffectorIndex=3
 
 try:
       
@@ -57,7 +57,21 @@ try:
     
       
       while True:
-            print("a")
+                  
+            jointPoses = p.calculateInverseKinematics(carModel, robotEndEffectorIndex, cajaPos  )
+            print(jointPoses)
+            p.addUserDebugText("X", cajaPos  , [1,0,0], 1)
+
+
+            for i in range(len(jointPoses)):
+                  p.setJointMotorControl2(bodyIndex=carModel,
+                                                      jointIndex=i,
+                                                      controlMode=p.POSITION_CONTROL,
+                                                      targetPosition=jointPoses[i],
+                                                      targetVelocity=0,
+                                                      force=500,
+                                                      positionGain=0.03,
+                                                      velocityGain=1)
             # Set the new camera target position
             #p.resetDebugVisualizerCamera(cam_distance, cam_yaw, cam_pitch, cam_target_pos)
 
